@@ -9,7 +9,6 @@
 export const debounce = (fn, delay = 0) => {
   let timout;
   return (...args) => {
-    console.log("2222******", new Date());
     clearTimeout(timout);
     timout = setTimeout(() => {
       fn.apply(this, args);
@@ -26,7 +25,7 @@ export const debounce = (fn, delay = 0) => {
 export const throtter1 = (fn, delay = 0) => {
   let pre = 0;
   return (...args) => {
-    console.log("throtter1******", new Date());
+    console.log('throtter1******', new Date());
     const now = Date.now();
     if (now - pre > delay) {
       pre = now;
@@ -44,7 +43,7 @@ export const throtter1 = (fn, delay = 0) => {
 export const throtter2 = (fn, delay = 0) => {
   let timout;
   return (...args) => {
-    console.log("throtter2******", new Date());
+    console.log('throtter2******', new Date());
     if (!timout) {
       timout = setTimeout(() => {
         timout = null;
@@ -101,4 +100,83 @@ export const bfs1 = (tree) => {
     }
   }
   return res;
+};
+
+// 柯里化通用函数
+export const curry = (fn, ...args) => {
+  return args.length >= fn.length
+    ? fn.apply(this, args)
+    : (...args2) => curry(fn, ...args, ...args2);
+};
+
+export const uncurried = (fn, length) => {
+  return (...args) => {
+    if (args.length >= length) {
+      return fn.apply(this, args);
+    }
+    return (...args2) => uncurried(fn, length)(...args, ...args2);
+  };
+};
+
+// 节流函数
+export const throtter = (fn, delay = 0) => {
+  let pre = 0;
+  return (...args) => {
+    console.log('throtter******', new Date());
+    const now = Date.now();
+    if (now - pre > delay) {
+      pre = now;
+      fn.apply(this, args);
+    }
+  };
+};
+
+// 遍历树结构 reduce
+export const reduceTree = (tree, childrenKey = 'children') => {
+  return tree.reduce((pre, item) => {
+    pre.push(item);
+    if (item[childrenKey] && item[childrenKey].length) {
+      pre = pre.concat(reduceTree(item[childrenKey], childrenKey));
+    }
+    return pre;
+  }, []);
+};
+
+// 平铺树成map reduce
+export const reduceTreeToMap = (tree, childrenKey = 'children') => {
+  return tree.reduce((pre, item) => {
+    pre[item.id] = item;
+    if (item[childrenKey] && item[childrenKey].length) {
+      pre = { ...pre, ...reduceTreeToMap(item[childrenKey], childrenKey) };
+    }
+    return pre;
+  }, {});
+};
+
+// 一键复制
+
+export function copyContent(value) {
+  if (!value) {
+    console.log('无复制内容');
+    return;
+  }
+  const textarea = document.createElement('textarea');
+  textarea.readOnly = 'readonly';
+  textarea.style.zIndex = '-9999';
+  textarea.style.position = 'absolute';
+
+  textarea.value = value;
+  document.body.appendChild(textarea);
+  // 选中并复制
+  textarea.select();
+  const res = document.execCommand('Copy');
+  if (res) {
+    console.log('复制成功：', res);
+  }
+  document.body.removeChild(textarea);
+}
+
+export default {
+  copyContent,
+  debounce,
 };

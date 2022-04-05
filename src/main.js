@@ -1,7 +1,9 @@
-import { createApp } from "vue";
-import App from "./App.vue";
-import router from "./route";
-import "uno.css";
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './route';
+import directive from './directive';
+import 'uno.css';
 const app = createApp(App);
 app.use(router);
-app.mount("#app");
+app.use(directive);
+app.mount('#app');

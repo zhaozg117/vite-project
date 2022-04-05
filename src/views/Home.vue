@@ -1,7 +1,7 @@
 <script setup>
-import { ref } from "vue";
-import VirtualList from "@/components/VirtualList.vue";
-import { debounce, throtter1, throtter2 } from "@/utils";
+import { ref } from 'vue';
+import VirtualList from '@/components/VirtualList.vue';
+import { debounce, throtter1, throtter2 } from '@/utils';
 defineProps({
   msg: String,
 });
@@ -13,14 +13,21 @@ const data = Array.from({ length: 100000 }).map((e, index) => ({
 const count = ref(0);
 
 const inputChange = throtter2((val) => {
-  console.log("aaaa", new Date());
+  console.log('aaaa', new Date());
 }, 1500);
+
+const inputFn = (e) => {
+  console.log('aaaaa', e.target.value);
+};
 </script>
 
 <template>
   <div class="p-x-20">
     <h1>{{ msg }}</h1>
-    <input type="text" @input="inputChange" />
+    <input
+      type="text"
+      v-debounce="{ event: 'keyup', fn: inputFn, delay: 500 }"
+    />
     <virtual-list :data="data" dataKey="code"></virtual-list>
   </div>
 </template>
